@@ -3,6 +3,7 @@ const cors = require("cors");
 const config = require("./app/config");
 const contactsRouter = require("./app/routes/contact.route");
 const ApiError = require("./app/api-error");
+const MongoDB = require("./app/utils/mongodb.util");
 
 const app = express();
 
@@ -20,8 +21,20 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = config.app.port;
+async function startServer() {
+  try {
+    await MongoDB.connect(config.db.uri);
+    console.log("Connected to MongoDB");
 
-app.listen(PORT, () => {
-  console.log("Server is running on port " + PORT);
-});
+    const PORT = config.app.port;
+
+    app.listen(PORT, () => {
+      console.log("Server is running on port " + PORT);
+    });
+  } catch (error) {
+    console.log("Cannot connect to database", error);
+    process.exit(1);
+  }
+}
+
+startServer();
