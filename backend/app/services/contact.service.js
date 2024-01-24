@@ -2,7 +2,7 @@ const { ObjectId } = require("mongodb");
 
 class ContactService {
   constructor(client) {
-    this.Contact = client.db().collection("contacts");
+    this.Contact = client.db("contactbook").collection("contacts");
   }
   extractContactData(payload) {
     const contact = {
@@ -12,9 +12,10 @@ class ContactService {
       phone: payload.phone,
       favorite: payload.favorite,
     };
-    objects
-      .keys(contact)
-      .forEach((key) => contact[key] === undefined && delete contact[key]);
+
+    Object.keys(contact).forEach(
+      (key) => contact[key] === undefined && delete contact[key]
+    );
     return contact;
   }
   async create(payload) {

@@ -3,9 +3,12 @@ const cors = require("cors");
 const config = require("./app/config");
 const contactsRouter = require("./app/routes/contact.route");
 const ApiError = require("./app/api-error");
-const MongoDB = require("./app/utils/mongodb.util");
+const dotenv = require("dotenv");
+const mongoDB = require("./app/utils/mongodb.util");
 
 const app = express();
+
+dotenv.config();
 
 app.use(cors());
 app.use(express.json());
@@ -23,9 +26,7 @@ app.use((err, req, res, next) => {
 
 async function startServer() {
   try {
-    await MongoDB.connect(config.db.uri);
-    console.log("Connected to MongoDB");
-
+    await mongoDB.connect();
     const PORT = config.app.port;
 
     app.listen(PORT, () => {

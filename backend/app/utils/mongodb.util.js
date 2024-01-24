@@ -1,13 +1,32 @@
 const { MongoClient } = require("mongodb");
+const config = require("../config");
+
+const uri = config.db.uri;
+const db_name = "contactbook";
 
 class MongoDB {
-  static connect = async (uri) => {
-    if (this.client) {
-      return this.client;
+  client;
+  db;
+
+  constructor() {
+    this.client = new MongoClient(uri);
+    this.db = this.client.db(db_name);
+  }
+
+  async connect() {
+    try {
+      await this.db.command({ ping: 1 });
+      console.log("Connected to MongoDB");
+    } catch (error) {
+      console.log(error);
     }
-    this.client = new MongoClient.connect(uri);
+  }
+
+  get client() {
     return this.client;
-  };
+  }
 }
 
-module.exports = MongoDB;
+const mongoDB = new MongoDB();
+
+module.exports = mongoDB;
